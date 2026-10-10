@@ -1,8 +1,7 @@
-"""
+﻿"""Консольное приложение для управления списком студентов и их оценок.
 
 Запуск:
-python -m lab.main
-    
+    python -m lab.main
 """
 
 import argparse
@@ -29,7 +28,7 @@ from lab.processing import (
 )
 
 MENU_TEXT = """
-= Меню =
+==== Меню ====
 1. Загрузить студентов из CSV
 2. Сохранить студентов в CSV
 3. Показать всех студентов
@@ -146,9 +145,9 @@ def run_menu(students: List[Student]) -> None:
             else:
                 print("Неизвестный пункт меню, попробуйте снова.")
         except LabError as exc:
-            # Ожидаемые, "предсказанные" ошибки приложения - не роняем программу
+           
             print(f"Ошибка: {exc}")
-        except Exception as exc:  # неожиданная ошибка - тоже не роняем программу
+        except Exception as exc: 
             print(f"Непредвиденная ошибка: {exc}")
 
 

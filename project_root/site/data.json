@@ -1,0 +1,80 @@
+{
+  "version": "e3fba84c546d",
+  "generated_at": "2026-10-10T10:39:23+00:00",
+  "students": [
+    {
+      "id": 1,
+      "name": "Иванов Иван",
+      "grades": [
+        78,
+        85,
+        90
+      ],
+      "average": 84.33
+    },
+    {
+      "id": 2,
+      "name": "Иванов Петр",
+      "grades": [
+        65,
+        70,
+        0
+      ],
+      "average": 45.0
+    },
+    {
+      "id": 3,
+      "name": "Иванова Анна",
+      "grades": [
+        92,
+        88,
+        3
+      ],
+      "average": 61.0
+    },
+    {
+      "id": 4,
+      "name": "Иванов Олег",
+      "grades": [
+        100,
+        90,
+        null
+      ],
+      "average": 95.0
+    },
+    {
+      "id": 5,
+      "name": "Иванова Юлия",
+      "grades": [
+        80,
+        null,
+        null
+      ],
+      "average": 80.0
+    }
+  ],
+  "stats": {
+    "count": 5,
+    "overall_avg": 70.08,
+    "best": {
+      "id": 4,
+      "name": "Иванов Олег",
+      "grades": [
+        100,
+        90,
+        null
+      ],
+      "average": 95.0
+    },
+    "worst": {
+      "id": 2,
+      "name": "Иванов Петр",
+      "grades": [
+        65,
+        70,
+        0
+      ],
+      "average": 45.0
+    }
+  }
+}

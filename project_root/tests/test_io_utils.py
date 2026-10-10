@@ -1,10 +1,5 @@
 import pytest
 
-import os
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from lab.errors import CsvFormatError, FileAccessError
 from lab.io_utils import export_top_n_csv, read_students_csv, write_students_csv
 from lab.models import Student

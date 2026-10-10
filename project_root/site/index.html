@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Студенты и оценки</title>
+<style>
+:root{--bg:#f5f6fa;--card:#fff;--text:#1f2430;--muted:#6b7280;--line:#e5e7eb;--ok:#16a34a}
+@media (prefers-color-scheme:dark){:root{--bg:#14161c;--card:#1d2028;--text:#e8eaf0;--muted:#9aa1b0;--line:#2c313c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,"Segoe UI",Arial,sans-serif}
+main{max-width:900px;margin:0 auto;padding:20px 14px 50px}
+h1{font-size:22px;margin:0}
+header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+#status{color:var(--muted);font-size:13px}
+#status.ok::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stats small{color:var(--muted);display:block}.stats b{font-size:19px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+input,select{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted)}.num{text-align:right}
+.empty{color:var(--muted);text-align:center;padding:18px}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Студенты и оценки</h1><span id="status">Загрузка…</span></header>
+<div class="card stats" id="stats"></div>
+<div class="card row">
+  <input id="q" placeholder="Поиск по ФИО" oninput="render()">
+  <select id="sort" onchange="render()">
+    <option value="id">По id</option>
+    <option value="avg">По среднему (убыв.)</option>
+    <option value="name">По имени</option>
+  </select>
+</div>
+<div class="card wrap">
+  <table>
+    <thead><tr><th>id</th><th>ФИО</th><th>Оценки</th><th class="num">Средний</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+</main>
+<script>
+const DATA_URL = 'data.json';
+const POLL_MS = 30000;
+let data = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtGrades = g => g.map(x => x === null ? '-' : x).join(' ');
+
+function render() {
+  if (!data) return;
+  const q = $('q').value.trim().toLowerCase();
+  let list = data.students.filter(s => s.name.toLowerCase().includes(q));
+  const key = $('sort').value;
+  if (key === 'avg') list.sort((a, b) => b.average - a.average || a.name.localeCompare(b.name, 'ru'));
+  else if (key === 'name') list.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  else list.sort((a, b) => a.id - b.id);
+
+  $('rows').innerHTML = list.length ? list.map(s =>
+    `<tr><td>${s.id}</td><td>${esc(s.name)}</td><td>${fmtGrades(s.grades)}</td><td class="num">${s.average.toFixed(2)}</td></tr>`
+  ).join('') : '<tr><td colspan="4" class="empty">Ничего не найдено</td></tr>';
+
+  const st = data.stats, who = s => s ? `${esc(s.name)} (${s.average.toFixed(2)})` : '—';
+  $('stats').innerHTML =
+    `<div><small>Студентов</small><b>${st.count}</b></div>` +
+    `<div><small>Общий средний</small><b>${st.overall_avg.toFixed(2)}</b></div>` +
+    `<div><small>Лучший</small><b style="font-size:15px">${who(st.best)}</b></div>` +
+    `<div><small>Худший</small><b style="font-size:15px">${who(st.worst)}</b></div>`;
+}
+
+function setStatus(text, ok) {
+  const s = $('status');
+  s.textContent = text;
+  s.className = ok ? 'ok' : '';
+}
+
+// Только чтение: 'no-cache' = спросить у CDN/сервера, не изменился ли файл
+// (если нет - придёт короткий ответ 304 без повторной загрузки).
+async function refresh() {
+  try {
+    const r = await fetch(DATA_URL, {cache: 'no-cache'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const fresh = await r.json();
+    const changed = !data || fresh.version !== data.version;
+    if (changed) { data = fresh; render(); }
+    const t = new Date(fresh.generated_at).toLocaleString('ru-RU');
+    setStatus('Данные от ' + t, true);
+  } catch (e) {
+    setStatus(data ? 'Нет связи, показаны последние данные' : 'Не удалось загрузить данные', false);
+  }
+}
+
+refresh();
+setInterval(refresh, POLL_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+</script>
+</body>
+</html>

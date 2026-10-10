@@ -1,4 +1,4 @@
-"""Модель данных Student и функции валидации отдельных полей."""
+﻿"""Модель данных Student и функции валидации отдельных полей."""
 
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -53,9 +53,6 @@ def validate_name(raw: object) -> str:
 
 def validate_grade(raw: object) -> Optional[int]:
     """Проверяет одну оценку.
-
-    Пустая строка/None -> отсутствующая оценка (None).
-    Иначе -> целое число в диапазоне [MIN_GRADE, MAX_GRADE].
     """
     if raw is None:
         return None
