@@ -8,6 +8,7 @@
     processing    - бизнес-логика: добавление/удаление/обновление,
                      сортировка, фильтрация, статистика, экспорт ТОП-N
     main          - точка входа, консольное меню (CLI)
+    publish       - выгрузка данных в site/data.json для сайта на CDN
 """
 
-__all__ = ["errors", "models", "io_utils", "processing", "main"]
+__all__ = ["errors", "models", "io_utils", "processing", "main", "publish"]

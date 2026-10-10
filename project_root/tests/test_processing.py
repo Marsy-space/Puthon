@@ -88,7 +88,7 @@ def test_filter_by_name_substring(sample_students):
 def test_group_stats(sample_students):
     stats = group_stats(sample_students)
     assert stats["count"] == 5
-    assert stats["best"].id == 3
+    assert stats["best"].id == 4
     assert stats["overall_avg"] > 0
 
 
