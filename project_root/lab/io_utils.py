@@ -16,7 +16,7 @@ ENCODING = "utf-8"
 
 
 def _looks_like_header(row: List[str]) -> bool:
-   
+
     if not row:
         return False
     first = row[0].strip().lower()
@@ -30,9 +30,7 @@ def _looks_like_header(row: List[str]) -> bool:
 
 
 def read_students_csv(path: str) -> List[Student]:
-    """Читает CSV-файл и возвращает список Student.
-
-    """
+   
     if not os.path.exists(path):
         raise FileAccessError(f"Файл не найден: {path}")
     if not os.access(path, os.R_OK):
@@ -72,8 +70,6 @@ def read_students_csv(path: str) -> List[Student]:
 
 
 def write_students_csv(path: str, students: List[Student], with_header: bool = True) -> None:
-    """Записывает список студентов в CSV.
-    """
     max_grades = max((len(s.grades) for s in students), default=0)
 
     directory = os.path.dirname(path)
@@ -81,7 +77,9 @@ def write_students_csv(path: str, students: List[Student], with_header: bool = T
         os.makedirs(directory, exist_ok=True)
 
     try:
-        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+       
+        tmp_path = path + ".tmp"
+        with open(tmp_path, "w", encoding=ENCODING, newline="") as f:
             writer = csv.writer(f)
             if with_header:
                 header = ["id", "name"] + [f"grade{i}" for i in range(1, max_grades + 1)]
@@ -90,18 +88,17 @@ def write_students_csv(path: str, students: List[Student], with_header: bool = T
                 padded = list(s.grades) + [None] * (max_grades - len(s.grades))
                 row = [s.id, s.name] + ["" if g is None else g for g in padded]
                 writer.writerow(row)
+        os.replace(tmp_path, path)
     except OSError as exc:
         raise FileAccessError(f"Не удалось записать файл {path}: {exc}") from exc
 
 
 def export_top_n_csv(path: str, students: List[Student]) -> None:
-    """Экспортирует уже отобранный список студентов (обычно ТОП-N) в CSV
-    с колонками id,name,average,grades (оценки одной строкой через пробел)."""
     directory = os.path.dirname(path)
     if directory:
         os.makedirs(directory, exist_ok=True)
     try:
-        with open(path, "w", encoding="utf-8-sig", newline="") as f:
+        with open(path, "w", encoding=ENCODING, newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "name", "average", "grades"])
             for s in students:

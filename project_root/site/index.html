@@ -98,7 +98,9 @@ async function refresh() {
 }
 
 refresh();
-setInterval(refresh, POLL_MS);
+setInterval(refresh, POLL_MS);  // запасной вариант (например, на обычном CDN)
+// Если страницу раздаёт lab.serve - сервер сам сообщает об изменениях
+if (window.EventSource) { new EventSource('events').onmessage = () => refresh(); }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 </script>
 </body>
