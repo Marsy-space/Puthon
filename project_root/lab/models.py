@@ -11,8 +11,6 @@ MAX_GRADE = 100
 
 @dataclass
 class Student:
-    """Студент: id, ФИО и список оценок.
-    """
 
     id: int
     name: str
@@ -20,20 +18,17 @@ class Student:
 
     @property
     def average(self) -> float:
-        """Средний балл по имеющимся (не пустым) оценкам.
-
-        Если оценок нет вообще (пустой список или все пустые) -> 0.0.
-        """
+        
         valid = [g for g in self.grades if g is not None]
         return sum(valid) / len(valid) if valid else 0.0
 
     def grades_display(self) -> str:
-        """Оценки одной строкой через пробел, пустая ставится как '-' """
+        
         return " ".join("-" if g is None else str(g) for g in self.grades)
 
 
 def validate_id(raw: object) -> int:
-    """Проверяет и приводит id к int. Бросает ValidationError при ошибке."""
+    
     try:
         value = int(str(raw).strip())
     except (ValueError, TypeError) as exc:
@@ -44,7 +39,7 @@ def validate_id(raw: object) -> int:
 
 
 def validate_name(raw: object) -> str:
-    """Проверяет ФИО: непустая строка после обрезки пробелов."""
+    
     name = str(raw).strip()
     if not name:
         raise ValidationError("ФИО не может быть пустым")
@@ -52,8 +47,7 @@ def validate_name(raw: object) -> str:
 
 
 def validate_grade(raw: object) -> Optional[int]:
-    """Проверяет одну оценку.
-    """
+   
     if raw is None:
         return None
     text = str(raw).strip()

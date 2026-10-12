@@ -9,7 +9,6 @@ import os
 import sys
 from typing import List, Optional
 
-
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
@@ -116,7 +115,14 @@ def action_sort_and_show(students: List[Student]) -> None:
     print_students(sort_students(students, key=key))
 
 
-def run_menu(students: List[Student]) -> None:
+def autosave(students: List[Student], path: Optional[str]) -> None:
+    """Если включён --autosave, сразу записывает изменения в CSV."""
+    if path:
+        write_students_csv(path, students, with_header=True)
+        print(f"Автосохранение: {path}")
+
+
+def run_menu(students: List[Student], autosave_path: Optional[str] = None) -> None:
     while True:
         print(MENU_TEXT)
         choice = prompt("Выберите пункт меню: ")
@@ -129,10 +135,13 @@ def run_menu(students: List[Student]) -> None:
                 print_students(students)
             elif choice == "4":
                 action_add(students)
+                autosave(students, autosave_path)
             elif choice == "5":
                 action_remove(students)
+                autosave(students, autosave_path)
             elif choice == "6":
                 action_update_grades(students)
+                autosave(students, autosave_path)
             elif choice == "7":
                 action_stats(students)
             elif choice == "8":
@@ -145,9 +154,8 @@ def run_menu(students: List[Student]) -> None:
             else:
                 print("Неизвестный пункт меню, попробуйте снова.")
         except LabError as exc:
-           
             print(f"Ошибка: {exc}")
-        except Exception as exc: 
+        except Exception as exc:  
             print(f"Непредвиденная ошибка: {exc}")
 
 
@@ -155,6 +163,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Управление списком студентов и оценок (CSV)")
     parser.add_argument("--load", metavar="PATH", help="загрузить студентов из CSV при старте")
     parser.add_argument("--save", metavar="PATH", help="сохранить студентов в CSV перед выходом")
+    parser.add_argument("--autosave", action="store_true", help="сохранять в файл из --load после каждого изменения")
     parser.add_argument("--top", metavar="N", type=int, help="вывести ТОП-N студентов и выйти")
     return parser.parse_args(argv)
 
@@ -176,7 +185,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         print_students(winners)
         return 0
 
-    run_menu(students)
+    if args.autosave and not args.load:
+        print("--autosave работает только вместе с --load PATH")
+        return 1
+
+    run_menu(students, args.load if args.autosave else None)
 
     if args.save:
         try:

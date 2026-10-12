@@ -1,4 +1,12 @@
 """Публикация данных для сайта: CSV -> статичный файл site/data.json.
+
+Сайт на CDN только читает data.json. Менять данные можно только здесь
+(правите CSV или работаете через CLI), затем запускаете публикацию.
+Файл перезаписывается ТОЛЬКО если данные реально изменились.
+
+Запуск:
+    python -m lab.publish
+    python -m lab.publish --csv data/students.csv --out site/data.json
 """
 
 import argparse

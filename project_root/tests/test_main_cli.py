@@ -63,3 +63,13 @@ def test_cli_top_flag_loads_and_prints(tmp_path, capsys):
     assert exit_code == 0
     assert "B" in captured.out
     assert "A" not in captured.out.split("\n")[-3]  # верхний студент - B, не A
+
+
+def test_cli_autosave_writes_csv_after_each_change(tmp_path, monkeypatch):
+    csv_path = tmp_path / "students.csv"
+    csv_path.write_text("id,name,grade1\n1,Иванов Иван,80\n", encoding="utf-8")
+    inputs = iter(["4", "2", "Новый Студент", "50", "0"])
+    monkeypatch.setattr("builtins.input", lambda _prompt="": next(inputs))
+
+    assert main(["--load", str(csv_path), "--autosave"]) == 0
+    assert "2,Новый Студент,50" in csv_path.read_text(encoding="utf-8")
