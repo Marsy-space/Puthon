@@ -1,8 +1,5 @@
 """Чтение и запись списка студентов в формате CSV.
-
 Формат: id,name,grade1,grade2,...,gradeN
-Колонок с оценками может быть 0..N, пустая ячейка = отсутствующая оценка.
-Файлы читаются/пишутся в кодировке UTF-8 с newline="" (требование csv).
 """
 
 import csv
@@ -24,7 +21,7 @@ def _looks_like_header(row: List[str]) -> bool:
         return False
     try:
         int(first)
-        return False  # первая ячейка — число => это данные, не заголовок
+        return False
     except ValueError:
         return True
 
@@ -62,7 +59,7 @@ def read_students_csv(path: str) -> List[Student]:
             sid = validate_id(row[0])
             name = validate_name(row[1])
             grades = [validate_grade(cell) for cell in row[2:]]
-        except Exception as exc:  # ValidationError -> оборачиваем с номером строки
+        except Exception as exc:
             raise CsvFormatError(f"Строка {line_no}: {exc}") from exc
         students.append(Student(id=sid, name=name, grades=grades))
 

@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-# Гарантируем, что пакет lab импортируется из корня проекта
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from lab.models import Student  # noqa: E402
+from lab.models import Student  
 
 
 @pytest.fixture

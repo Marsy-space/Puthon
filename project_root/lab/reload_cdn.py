@@ -1,7 +1,6 @@
 import os
 import requests
 
-# Пример вызова API CDN для инвалидации кеша
 CDN_PURGE_URL = os.getenv("CDN_PURGE_URL", "https://api.cdn-provider.com/v1/purge")
 CDN_API_KEY = os.getenv("CDN_API_KEY", "")
 

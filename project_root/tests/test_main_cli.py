@@ -40,7 +40,7 @@ def test_cli_invalid_menu_choice_does_not_crash(monkeypatch, capsys):
 
 
 def test_cli_remove_missing_student_shows_error_not_crash(monkeypatch, capsys):
-    inputs = iter(["5", "999", "0"])  # удалить id=999 (нет в списке), затем выход
+    inputs = iter(["5", "999", "0"]) 
     monkeypatch.setattr("builtins.input", lambda _prompt="": next(inputs))
 
     exit_code = main([])
@@ -62,7 +62,7 @@ def test_cli_top_flag_loads_and_prints(tmp_path, capsys):
     captured = capsys.readouterr()
     assert exit_code == 0
     assert "B" in captured.out
-    assert "A" not in captured.out.split("\n")[-3]  # верхний студент - B, не A
+    assert "A" not in captured.out.split("\n")[-3]  
 
 
 def test_cli_autosave_writes_csv_after_each_change(tmp_path, monkeypatch):

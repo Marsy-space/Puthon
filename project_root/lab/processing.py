@@ -42,13 +42,6 @@ def update_grades(students: List[Student], student_id: int, grades: List[Optiona
 
 
 def sort_students(students: List[Student], key: str = "avg") -> List[Student]:
-    """Возвращает НОВЫЙ отсортированный список (исходный не меняется).
-
-    key:
-      'avg'  - по убыванию среднего балла, при равенстве - по имени (a..z), для стабильности
-      'name' - по имени (a..z)
-      'id'   - по возрастанию id
-    """
     if key not in VALID_SORT_KEYS:
         raise ValueError(f"Неизвестный ключ сортировки: {key!r}. Допустимо: {VALID_SORT_KEYS}")
 
@@ -71,11 +64,6 @@ def filter_by_name_substring(students: List[Student], substring: str) -> List[St
 
 
 def group_stats(students: List[Student]) -> Dict[str, object]:
-    """Групповая статистика: количество студентов, общий средний балл
-    по всем оценкам, лучший и худший студент по среднему баллу.
-
-    Пустой список студентов обрабатывается корректно (без деления на 0).
-    """
     count = len(students)
     all_grades = [g for s in students for g in s.grades if g is not None]
     overall_avg = sum(all_grades) / len(all_grades) if all_grades else 0.0
@@ -94,8 +82,6 @@ def group_stats(students: List[Student]) -> Dict[str, object]:
 
 
 def top_n(students: List[Student], n: int) -> List[Student]:
-    """Возвращает первых n студентов по убыванию среднего балла
-    (та же логика сортировки, что и sort_students(key='avg'))."""
     if n < 0:
         raise ValueError("n не может быть отрицательным")
     return sort_students(students, key="avg")[:n]

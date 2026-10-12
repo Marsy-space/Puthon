@@ -29,7 +29,7 @@ def test_publish_writes_then_skips_when_unchanged(tmp_path):
 
     assert publish(str(csv_path), str(out)) is True
     assert json.loads(out.read_text(encoding="utf-8"))["stats"]["count"] == 1
-    assert publish(str(csv_path), str(out)) is False  # данные те же - файл не трогаем
+    assert publish(str(csv_path), str(out)) is False  
 
 
 def test_publish_updates_when_csv_changes(tmp_path):
