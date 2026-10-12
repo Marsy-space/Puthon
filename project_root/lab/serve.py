@@ -1,13 +1,4 @@
-"""Веб-сервер только для просмотра + слушатель изменений CSV.
 
-Слушатель следит за файлом CSV. Любое изменение (из консольного приложения
-в cmd, из Excel, вручную) -> data.json пересобирается -> открытые страницы
-получают сигнал и обновляются сами. Сайт данные менять не умеет.
-
-Запуск:
-    python -m lab.serve
-    python -m lab.serve --csv data/students.csv --port 8000
-"""
 
 import argparse
 import functools
@@ -21,8 +12,8 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from lab.errors import LabError  # noqa: E402
-from lab.publish import publish  # noqa: E402
+from lab.errors import LabError 
+from lab.publish import publish 
 
 
 class Hub:
@@ -67,7 +58,7 @@ class Watcher(threading.Thread):
             return False
         try:
             changed = publish(self.csv_path, self.out_path)
-        except LabError as exc:  # файл битый/недописан - оставляем старые данные
+        except LabError as exc: 
             print(f"[слушатель] файл пока не прочитан: {exc}")
             return False
         self._signature = sig
@@ -120,7 +111,7 @@ class Handler(SimpleHTTPRequestHandler):
                 else:
                     self.wfile.write(b": ping\n\n")
                 self.wfile.flush()
-        except OSError:  # страницу закрыли
+        except OSError: 
             return
 
     def _deny(self) -> None:
@@ -139,7 +130,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     hub = Handler.hub
     watcher = Watcher(args.csv, args.out, hub, args.interval)
-    watcher.check()  # первая выгрузка до старта
+    watcher.check() 
     watcher.start()
 
     handler = functools.partial(Handler, directory=os.path.dirname(os.path.abspath(args.out)))

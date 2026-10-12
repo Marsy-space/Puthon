@@ -29,7 +29,7 @@ def test_listener_sees_console_changes(tmp_path):
     csv_path.write_text("id,name,grade1\n1,Иванов Иван,80\n2,Петров Петр,60\n", encoding="utf-8")
     assert w.check() is True
     assert json.loads(out.read_text(encoding="utf-8"))["stats"]["count"] == 2
-    assert w.hub.counter == before + 1  # страницы уведомлены
+    assert w.hub.counter == before + 1  
 
 
 def test_broken_file_keeps_old_data(tmp_path):

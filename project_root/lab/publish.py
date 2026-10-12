@@ -1,13 +1,3 @@
-"""Публикация данных для сайта: CSV -> статичный файл site/data.json.
-
-Сайт на CDN только читает data.json. Менять данные можно только здесь
-(правите CSV или работаете через CLI), затем запускаете публикацию.
-Файл перезаписывается ТОЛЬКО если данные реально изменились.
-
-Запуск:
-    python -m lab.publish
-    python -m lab.publish --csv data/students.csv --out site/data.json
-"""
 
 import argparse
 import hashlib
@@ -32,8 +22,6 @@ def _student_dict(s: Student) -> Dict[str, Any]:
 
 
 def build_snapshot(students: List[Student]) -> Dict[str, Any]:
-    """Собирает снимок данных. version - хэш содержимого: меняется
-    только когда меняются сами данные (а не время публикации)."""
     st = group_stats(students)
     payload = {
         "students": [_student_dict(s) for s in sort_students(students, key="id")],
@@ -59,8 +47,6 @@ def _current_version(out_path: str) -> Optional[str]:
 
 
 def publish(csv_path: str, out_path: str) -> bool:
-    """Читает CSV и обновляет data.json. Возвращает True, если файл записан,
-    False - если данные не изменились. Ошибки CSV/файлов - LabError."""
     snapshot = build_snapshot(read_students_csv(csv_path))
     if snapshot["version"] == _current_version(out_path):
         return False
